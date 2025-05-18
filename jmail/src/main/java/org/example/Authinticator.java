@@ -13,4 +13,4 @@ public class Authinticator extends User{
         }
         else return Null;
     }
-}
+}//
