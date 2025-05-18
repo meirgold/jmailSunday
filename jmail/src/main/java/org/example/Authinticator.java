@@ -11,6 +11,6 @@ public class Authinticator extends User{
                 return getUser(email);
             }
         }
-        else return Null;
+        else return null;
     }
 }//
