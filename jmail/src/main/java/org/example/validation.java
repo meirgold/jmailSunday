@@ -12,6 +12,7 @@ public class Validation {
     for(user : emails)
 
     {
+        //
         if (checkemail(user.username, user.passward) == false) {
             System.out.println("INVALID function:")
         }
