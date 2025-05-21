@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseAdapter {
 
     private static final String databaseFile = "file.json";
     private final File file = new File(databaseFile);
-
+    private static final ArrayList<User> users = new ArrayList<>();
 
     public static void  initalize(){
         File file = new File(databaseFile);
@@ -26,37 +27,52 @@ public class DatabaseAdapter {
 
     }
     public static boolean addRow(User user){
-        List<User> users = new ArrayList<>();
+        try{
+        users.add(user);
+        return true;
 
-        // Step 1: Read existing users if the file exists and is not empty
-        if (file.exists() && file.length() > 0) {
-            try {
-                users = mapper.readValue(file, new TypeReference<List<User>>() {});
-            } catch (IOException e) {
-                System.err.println("Error reading JSON: " + e.getMessage());
+        } catch (RuntimeException e){
+            return false;
+        }
+    }
+    public static User deleteRow(String email) {
+        for (User user : users) {
+            if (user.getMail().equals(email)) {
+                users.remove(user);
+                return user;
+            }
+        }
+        return null;
+    }
+    public static User getRow(String email) {
+        if (users.isEmpty()) {
+            return users.get(0);
+        }
+        else{
+            for (User user : users) {
+                if (user.getMail().equals(email)) {
+                    return user;
+                }
             }
         }
 
-        // Step 2: Add the new user
-        users.add(user);
+    }
 
-        // Step 3: Write the updated list back to the file
-        try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(file, users);
-            System.out.println("User added successfully.");
-        } catch (IOException e) {
-            System.err.println("Error writing JSON: " + e.getMessage());
+    // Check if a user with a field-value pair exists
+    public static boolean exists(String field, String value) {
+        for (User user : users) {
+            switch (field.toLowerCase()) {
+                case "name":
+                    if (user.getUserName().equals(value)) return true;
+                    break;
+                case "email":
+                    if (user.getMail().equals(value)) return true;
+                    break;
+                default:
+                    return false;
+            }
         }
-
-    }
-    public static User deleteRow(String email){
-
-    }
-    public static User getRow(){
-
-    }
-    public static boolean exists(String field, String value){
-
+        return false;
     }
     public static void  flushDatabase(){
 
